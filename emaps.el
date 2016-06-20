@@ -19,5 +19,45 @@
 ;;;
 ;;; Code:
 
+(defmacro emaps--with-modify-help-buffer (body)
+  "Execute BODY with the current help buffer active; allow modifications."
+  `(with-current-buffer (get-buffer "*Help*")
+     (let ((buffer-read-only nil))
+       ,body
+       (set-buffer-modified-p nil))))
+
+(defun emaps--completing-read-variable (prompt &optional pred)
+  "Prompt the user with PROMPT for a variable that satisfied PRED (if supplied)."
+  (let ((v (variable-at-point))
+        (enable-recursive-minibuffers t)
+        (check
+         (lambda (it)
+           (and (symbolp it)
+                (boundp it)
+                (if pred (funcall pred (symbol-value it)) t))))
+        vars
+        val)
+    (mapatoms (lambda (atom) (when (funcall check atom) (push atom vars))))
+    (setq val (completing-read
+               (if (funcall check v)
+                   (format
+                    (concat prompt " (default %s): ") v)
+                 (concat prompt ": "))
+               vars
+               check
+               t nil nil
+               (if (symbolp v) (symbol-name v))))
+    (list (if (equal val "") v (intern val)))))
+
+(defun emaps-describe-keymap (keymap)
+  "Display the full documentation of KEYMAP (a symbol).
+
+Unlike `describe-variable', this will display characters as strings rather than integers."
+  (interactive (emaps--completing-read-variable "Describe keymap" 'keymapp))
+  (describe-variable keymap)
+  (emaps--with-modify-help-buffer
+   (save-excursion (while (search-forward-regexp "(\\([0-9]+\\) ." nil t)
+                     (replace-match (char-to-string (string-to-number (match-string 1))) nil nil nil 1)))))
+
 (provide 'emaps)
 ;;; emaps.el ends here
