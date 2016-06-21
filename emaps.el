@@ -49,6 +49,7 @@
                (if (symbolp v) (symbol-name v))))
     (list (if (equal val "") v (intern val)))))
 
+;;;###autoload
 (defun emaps-describe-keymap (keymap)
   "Display the full documentation of KEYMAP (a symbol).
 
