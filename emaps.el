@@ -59,5 +59,18 @@ Unlike `describe-variable', this will display characters as strings rather than 
    (save-excursion (while (search-forward-regexp "(\\([0-9]+\\) ." nil t)
                      (replace-match (char-to-string (string-to-number (match-string 1))) nil nil nil 1)))))
 
+;;;###autoload
+(defun emaps-define-key (keymap key def &rest bindings)
+  "Create a binding in KEYMAP from KEY to DEF and each key def pair in BINDINGS.
+
+See `define-key' for the forms that KEY and DEF may take."
+  (let ((defs (append (list key def) bindings)))
+    (dotimes (n (/ (length defs) 2))
+      (let ((key (nth (* n 2) defs))
+            (def (nth (+ (* n 2) 1) defs)))
+         ; (print (format "Binding %s to %s" key def))
+        (define-key keymap key def)))))
+(put 'emaps-define-key 'lisp-indent-function 'defun)
+
 (provide 'emaps)
 ;;; emaps.el ends here
