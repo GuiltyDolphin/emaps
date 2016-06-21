@@ -1,4 +1,4 @@
-;;; emaps --- utilities for working with keymaps.
+;;; emaps.el --- utilities for working with keymaps.
 ;;;
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
