@@ -1,4 +1,4 @@
-;;; emaps --- utilities for working with keymaps.
+;;; emaps.el --- utilities for working with keymaps.
 ;;;
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -49,6 +49,7 @@
                (if (symbolp v) (symbol-name v))))
     (list (if (equal val "") v (intern val)))))
 
+;;;###autoload
 (defun emaps-describe-keymap (keymap)
   "Display the full documentation of KEYMAP (a symbol).
 
