@@ -65,7 +65,8 @@ Unlike `describe-variable', this will display characters as strings rather than 
    (save-excursion
      (while (search-forward-regexp "(\\([0-9]+\\) ." nil t)
        (let ((keychar (string-to-number (match-string 1))))
-         (replace-match (propertize (char-to-string keychar) 'face emaps-key-face) nil nil nil 1))))))
+         (when (characterp keychar)
+           (replace-match (propertize (char-to-string keychar) 'face emaps-key-face) nil t nil 1)))))))
 
 ;;;###autoload
 (defun emaps-define-key (keymap key def &rest bindings)
