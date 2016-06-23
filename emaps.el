@@ -89,13 +89,14 @@ Unlike `describe-variable', this will display characters as strings rather than 
               (overriding-local-map temp-map)
               (overriding-local-map-menu-flag t)
               (check-buffer (current-buffer))
-              (global-map temp-map)
               (buffer-read-only nil))
           (describe-buffer-bindings check-buffer (kbd prefix))
           (goto-char (point-min))
           (save-excursion
             (search-forward-regexp "^key")
-            (delete-region (point-min) (match-beginning 0)))
+            (delete-region (point-min) (match-beginning 0))
+            (search-forward-regexp "\C-l\nGlobal")
+            (delete-region (match-beginning 0) (point-max)))
           (save-excursion
             (insert (format "Describing bindings for '%s\n" keymap-name))
             (while (search-forward-regexp (format "\\(^\\|..\\)\\(%s \\)" prefix) nil t)
