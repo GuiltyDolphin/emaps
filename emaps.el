@@ -75,6 +75,7 @@ Unlike `describe-variable', this will display characters as strings rather than 
       (setq repeated (concat repeated " " repeated)))
     repeated))
 
+;;;###autoload
 (defun emaps-describe-keymap-bindings (keymap)
   "Like `describe-bindings', but only describe bindings in KEYMAP."
   (interactive (emaps--completing-read-variable "Enter keymap" 'keymapp))
