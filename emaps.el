@@ -113,7 +113,6 @@ See `define-key' for the forms that KEY and DEF may take."
     (dotimes (n (/ (length defs) 2))
       (let ((key (nth (* n 2) defs))
             (def (nth (+ (* n 2) 1) defs)))
-         ; (print (format "Binding %s to %s" key def))
         (define-key keymap key def)))))
 (put 'emaps-define-key 'lisp-indent-function 'defun)
 
