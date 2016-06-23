@@ -68,6 +68,40 @@ Unlike `describe-variable', this will display characters as strings rather than 
          (when (characterp keychar)
            (replace-match (propertize (char-to-string keychar) 'face emaps-key-face) nil t nil 1)))))))
 
+(defun emaps--get-available-binding-as-string (prefix)
+  "Repeat PREFIX until there is an available binding (and return it as a string)."
+  (let ((repeated prefix))
+    (while (key-binding (kbd repeated))
+      (setq repeated (concat repeated " " repeated)))
+    repeated))
+
+(defun emaps-describe-keymap-bindings (keymap)
+  "Like `describe-bindings', but only describe bindings in KEYMAP."
+  (interactive (emaps--completing-read-variable "Enter keymap" 'keymapp))
+  (let* ((keymap-name (if (symbolp keymap) (symbol-name keymap) "?"))
+         (keymap (if (symbolp keymap) (symbol-value keymap) keymap))
+         (temp-map '(keymap))
+         (prefix (emaps--get-available-binding-as-string "a")))
+    (define-key temp-map (kbd prefix) keymap)
+    (with-help-window (help-buffer)
+      (with-current-buffer (help-buffer)
+        (let ((overriding-terminal-local-map temp-map)
+              (overriding-local-map temp-map)
+              (overriding-local-map-menu-flag t)
+              (check-buffer (current-buffer))
+              (global-map temp-map)
+              (buffer-read-only nil))
+          (describe-buffer-bindings check-buffer (kbd prefix))
+          (goto-char (point-min))
+          (save-excursion
+            (search-forward-regexp "^key")
+            (delete-region (point-min) (match-beginning 0)))
+          (save-excursion
+            (insert (format "Describing bindings for '%s\n" keymap-name))
+            (while (search-forward-regexp (format "\\(^\\|..\\)\\(%s \\)" prefix) nil t)
+              (replace-match "" nil nil nil 2)))
+          (set-buffer-modified-p nil))))))
+
 ;;;###autoload
 (defun emaps-define-key (keymap key def &rest bindings)
   "Create a binding in KEYMAP from KEY to DEF and each key def pair in BINDINGS.
