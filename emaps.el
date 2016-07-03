@@ -109,6 +109,13 @@ Unlike `describe-variable', this will display characters as strings rather than 
           (set-buffer-modified-p nil))))))
 
 ;;;###autoload
+(defun emaps-keymap-for-mode (mode)
+  "Return the keymap for MODE (or NIL if none exists)."
+  (let ((mode-map-symbol (intern (concat (symbol-name mode) "-map"))))
+    (when (boundp mode-map-symbol)
+      (symbol-value mode-map-symbol))))
+
+;;;###autoload
 (defun emaps-define-key (keymap key def &rest bindings)
   "Create a binding in KEYMAP from KEY to DEF and each key def pair in BINDINGS.
 
