@@ -54,12 +54,16 @@
                (if (symbolp v) (symbol-name v))))
     (list (if (equal val "") v (intern val)))))
 
+(defun emaps--read-keymap ()
+  "Read the name of a keymap from the minibuffer and return it as a symbol."
+  (emaps--completing-read-variable "Enter keymap" 'keymapp))
+
 ;;;###autoload
 (defun emaps-describe-keymap (keymap)
   "Display the full documentation of KEYMAP (a symbol).
 
 Unlike `describe-variable', this will display characters as strings rather than integers."
-  (interactive (emaps--completing-read-variable "Describe keymap" 'keymapp))
+  (interactive (emaps--read-keymap))
   (describe-variable keymap)
   (emaps--with-modify-help-buffer
    (save-excursion
@@ -78,7 +82,7 @@ Unlike `describe-variable', this will display characters as strings rather than 
 ;;;###autoload
 (defun emaps-describe-keymap-bindings (keymap)
   "Like `describe-bindings', but only describe bindings in KEYMAP."
-  (interactive (emaps--completing-read-variable "Enter keymap" 'keymapp))
+  (interactive (emaps--read-keymap))
   (let* ((keymap-name (if (symbolp keymap) (symbol-name keymap) "?"))
          (keymap (if (symbolp keymap) (symbol-value keymap) keymap))
          (temp-map '(keymap))
