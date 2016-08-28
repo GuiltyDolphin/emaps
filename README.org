@@ -3,3 +3,28 @@
 * Introduction
 
 Emaps provides utilities for working with keymaps and keybindings in Emacs.
+
+* Features
+
+** Defining keys
+
+Emacs has a built-in ~define-key~ function, but this can only handle one binding
+at a time, for example:
+
+#+BEGIN_SRC emacs-lisp
+(define-key keymap "a" 'fun-a)
+(define-key keymap "b" 'fun-b)
+(define-key keymap "c" 'fun-c)
+; etc.
+#+END_SRC
+
+Emaps provides the ~emaps-define-key~ function that provides the same
+functionality, but allows multiple keys to be defined at once, thus the
+above becomes:
+
+#+BEGIN_SRC emacs-lisp
+(emaps-define-key keymap
+  "a" 'fun-a
+  "b" 'fun-b
+  "c" 'fun-c) ; etc.
+#+END_SRC
