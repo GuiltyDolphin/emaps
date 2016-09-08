@@ -28,3 +28,14 @@ above becomes:
   "b" 'fun-b
   "c" 'fun-c) ; etc.
 #+END_SRC
+
+** Viewing keymaps
+
+Run ~M-x emaps-describe-keymap-bindings~ (recommended binding ~C-h K~) to
+display the bindings for a given keymap (see below), ~emaps-describe-keymap~
+can be used to view keymaps as variables (but with characters displayed instead
+of integers, where possible).
+
+#+CAPTION: Display after running emaps-describe-keymap-bindings with magit-status-mode-map.
+#+NAME:   fig:emaps-describe-keymap-bindings-magit-status-mode-map
+[[./images/emaps-describe-keymap-bindings.png]]
