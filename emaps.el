@@ -19,6 +19,12 @@
 ;;;
 ;;; Code:
 
+(defgroup emaps nil
+  "Utilities for working with keymaps."
+  :group 'convenience
+  :group 'keyboard
+  :prefix 'emaps-)
+
 (defcustom emaps-key-face 'font-lock-constant-face
   "Face used by when displaying keys."
   :group 'emaps
