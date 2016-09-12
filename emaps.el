@@ -166,5 +166,9 @@ See `define-key' for the forms that KEY and DEF may take."
 Unlike `kbd', this will not error on an invalid sequence, but instead return NIL."
   (ignore-errors (kbd keys)))
 
+(defun emaps--looks-like-key (key-string)
+  "T if KEY-STRING resembles a valid single key."
+  (not (string-match-p ".+\s\\|\s.+\\|^$" (key-description (emaps--kbd key-string)))))
+
 (provide 'emaps)
 ;;; emaps.el ends here
