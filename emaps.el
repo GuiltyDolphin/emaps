@@ -156,5 +156,15 @@ See `define-key' for the forms that KEY and DEF may take."
         (define-key keymap key def)))))
 (put 'emaps-define-key 'lisp-indent-function 'defun)
 
+;;;;;;;;;;;;;;;;;;
+;; Reading Keys ;;
+;;;;;;;;;;;;;;;;;;
+
+(defun emaps--kbd (keys)
+  "Convert KEYS to the internal Emacs key representation.
+
+Unlike `kbd', this will not error on an invalid sequence, but instead return NIL."
+  (ignore-errors (kbd keys)))
+
 (provide 'emaps)
 ;;; emaps.el ends here
