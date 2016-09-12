@@ -35,5 +35,22 @@
           (insert buf-string)
           (should (equal expected (emaps--key-at-point point))))))))
 
+(ert-deftest emaps-test-key-sequence-at-point ()
+  "Tests for `emaps--key-sequence-at-point'."
+  (let ((forms `(("C-x" 1 ,(kbd "C-x"))
+                 ("C-x y" 1 ,(kbd "C-x y"))
+                 ("C-x y" 4 ,(kbd "C-x y"))
+                 ("C-x  y" 5 ,(kbd "C-x")) ; probably want nil
+                 ("C-x y" 5 ,(kbd "C-x y"))
+                 ("foo" 1 nil)
+                 ("foo C-x y" 5 ,(kbd "C-x y"))
+                 ; mayhaps incorrect behavior?
+                 ("foo C-x y" 4 ,(kbd "C-x y")))))
+    (dolist (form forms)
+      (-let (((buf-string point expected) form))
+        (with-temp-buffer
+          (insert buf-string)
+          (should (equal expected (emaps--key-sequence-at-point point))))))))
+
 (provide 'emaps-tests)
 ;;; emaps-tests.el ends here

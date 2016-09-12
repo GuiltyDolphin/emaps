@@ -179,5 +179,20 @@ Unlike `kbd', this will not error on an invalid sequence, but instead return NIL
            (key-string (string-remove-suffix " " (string-remove-prefix " " (buffer-substring bok eok)))))
       (when (emaps--looks-like-key key-string) (emaps--kbd key-string)))))
 
+(defun emaps--key-sequence-at-point (point)
+  "Return the key sequnce at POINT or NIL.
+
+See also `emaps--key-at-point'."
+  (save-excursion
+    (goto-char point)
+    (let* ((bos (save-excursion (re-search-backward "^\\| \\{2,\\}" (point-at-bol) t)))
+           (eos (save-excursion (re-search-forward "$\\| \\{2,\\}" (point-at-eol) t)))
+           (keys (split-string (buffer-substring bos eos) " "))
+           (first-key-index (-find-index 'emaps--looks-like-key keys)))
+      (when first-key-index
+        (let* ((last-key-index (--find-index (not (emaps--looks-like-key it)) (-slice keys first-key-index)))
+               (valid-keys (-slice keys first-key-index last-key-index)))
+          (emaps--kbd (string-join valid-keys " ")))))))
+
 (provide 'emaps)
 ;;; emaps.el ends here
