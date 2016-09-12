@@ -170,5 +170,14 @@ Unlike `kbd', this will not error on an invalid sequence, but instead return NIL
   "T if KEY-STRING resembles a valid single key."
   (not (string-match-p ".+\s\\|\s.+\\|^$" (key-description (emaps--kbd key-string)))))
 
+(defun emaps--key-at-point (point)
+  "Return the key at POINT or NIL."
+  (save-excursion
+    (goto-char point)
+    (let* ((bok (save-excursion (re-search-backward "^\\|\s" nil t)))
+           (eok (save-excursion (re-search-forward "$\\|\s" nil t)))
+           (key-string (string-remove-suffix " " (string-remove-prefix " " (buffer-substring bok eok)))))
+      (when (emaps--looks-like-key key-string) (emaps--kbd key-string)))))
+
 (provide 'emaps)
 ;;; emaps.el ends here
