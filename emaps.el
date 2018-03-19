@@ -20,7 +20,7 @@
 ;; Created: 2016-06-20
 ;; Version: 0.1.0
 ;; Keywords: convenience, keyboard, keymap, utility
-;; Package-Requires: ()
+;; Package-Requires: ((dash "2.13.0"))
 
 ;;; Commentary:
 
@@ -44,6 +44,8 @@
 ;;      where possible.
 
 ;;; Code:
+
+(require 'dash)
 
 (defgroup emaps nil
   "Utilities for working with keymaps."
