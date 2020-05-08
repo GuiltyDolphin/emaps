@@ -1,4 +1,4 @@
-;;; emaps-tests.el
+;;; emaps-tests.el -*- lexical-binding: t; -*-
 ;;; Code:
 
 (require 'ert)

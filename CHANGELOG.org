@@ -18,6 +18,7 @@
 - =emaps-describe-keymap= and =emaps-describe-keymap-bindings=
   will now default the prompt to the current major mode map if
   the symbol at point is not a keymap symbol
+- package now uses lexical binding
 
 * 0.1.0 - 2018-07-12
 
