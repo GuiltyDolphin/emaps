@@ -69,6 +69,10 @@
   "Return non-NIL if X is a symbol with a value."
   (and (symbolp x) (boundp x)))
 
+(defun emaps--active-keymap-p (x)
+  "Return non-NIL if X is a keymap that is currently active."
+  (and (keymapp x) (memq x (current-active-maps))))
+
 (defun emaps--completing-read-variable (prompt &optional pred def)
   "Prompt the user with PROMPT for a variable that satisfied PRED (if supplied).
 
@@ -78,7 +82,9 @@ If DEF is supplied and satisfies PRED, use that as the default value, otherwise 
           (lambda (it)
             (and (emaps--bound-symbol-p it)
                  (if pred (funcall pred (symbol-value it)) t))))
-         (v (or (and (funcall check def) def) (variable-at-point)))
+         (v (or (and (funcall check def) def)
+                (let ((var (variable-at-point)))
+                  (and (funcall check var) var))))
          vars
          val)
     (mapatoms (lambda (atom) (when (funcall check atom) (push atom vars))))
@@ -90,7 +96,7 @@ If DEF is supplied and satisfies PRED, use that as the default value, otherwise 
                vars
                check
                t nil nil
-               (if (symbolp v) (symbol-name v))))
+               (if (funcall check v) (symbol-name v))))
     (list (if (equal val "") v (intern val)))))
 
 (defun emaps--keymap-symbol-p (x)
@@ -102,10 +108,12 @@ If DEF is supplied and satisfies PRED, use that as the default value, otherwise 
   (let ((vap (variable-at-point)))
     (and (emaps--keymap-symbol-p vap) vap)))
 
-(defun emaps--read-keymap ()
-  "Read the name of a keymap from the minibuffer and return it as a symbol."
+(defun emaps--read-keymap (&optional active-only)
+  "Read the name of a keymap from the minibuffer and return it as a symbol.
+
+If ACTIVE-ONLY is non-NIL, allow selection only from active keymaps."
   (emaps--completing-read-variable
-   "Enter keymap" 'keymapp
+   "Enter keymap" (if active-only #'emaps--active-keymap-p 'keymapp)
    ;; if there is a keymap at point, use this as the default as the
    ;; user probably means to query this, otherwise default to the
    ;; keymap variable for the current major mode.
@@ -115,8 +123,10 @@ If DEF is supplied and satisfies PRED, use that as the default value, otherwise 
 (defun emaps-describe-keymap (keymap)
   "Display the full documentation of KEYMAP (a symbol).
 
+When interactively called with a prefix argument, prompt only for active keymaps.
+
 Unlike `describe-variable', this will display characters as strings rather than integers."
-  (interactive (emaps--read-keymap))
+  (interactive (emaps--read-keymap current-prefix-arg))
   (describe-variable keymap)
   (emaps--with-modify-help-buffer
    (save-excursion
@@ -134,8 +144,10 @@ Unlike `describe-variable', this will display characters as strings rather than 
 
 ;;;###autoload
 (defun emaps-describe-keymap-bindings (keymap)
-  "Like `describe-bindings', but only describe bindings in KEYMAP."
-  (interactive (emaps--read-keymap))
+  "Like `describe-bindings', but only describe bindings in KEYMAP.
+
+When interactively called with a prefix argument, prompt only for active keymaps."
+  (interactive (progn (emaps--read-keymap current-prefix-arg)))
   (let* ((keymap-name (if (emaps--keymap-symbol-p keymap) (symbol-name keymap) "?"))
          (keymap (if (emaps--keymap-symbol-p keymap) (symbol-value keymap) keymap))
          (temp-map '(keymap))

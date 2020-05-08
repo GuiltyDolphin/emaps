@@ -12,6 +12,9 @@
   - =CHANGELOG.org=
   - =.travis.yml=
 - new dependency: =dash (2.17.0)=
+- you can now specify a prefix argument to
+  =emaps-describe-keymap= and =emaps-describe-keymap-bindings=
+  to select from only active keymaps
 
 ** Changed
 

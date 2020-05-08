@@ -35,7 +35,8 @@ Run ~M-x emaps-describe-keymap-bindings~ to display the
 bindings for a given keymap (see below),
 ~emaps-describe-keymap~ can be used to view keymaps as
 variables (but with characters displayed instead of integers,
-where possible).
+where possible). Executing these commands with a prefix
+argument allows you to choose from only active keymaps.
 
 #+CAPTION: Display after running ~emaps-describe-keymap-bindings~ with ~magit-status-mode-map~.
 #+NAME:   fig:emaps-describe-keymap-bindings-magit-status-mode-map
