@@ -65,17 +65,20 @@
        ,body
        (set-buffer-modified-p nil))))
 
-(defun emaps--completing-read-variable (prompt &optional pred)
-  "Prompt the user with PROMPT for a variable that satisfied PRED (if supplied)."
-  (let ((v (variable-at-point))
-        (enable-recursive-minibuffers t)
-        (check
-         (lambda (it)
-           (and (symbolp it)
-                (boundp it)
-                (if pred (funcall pred (symbol-value it)) t))))
-        vars
-        val)
+(defun emaps--completing-read-variable (prompt &optional pred def)
+  "Prompt the user with PROMPT for a variable that satisfied PRED (if supplied).
+
+If DEF is supplied and satisfies PRED, use that as the default value, otherwise use the value of `variable-at-point'."
+  (let* ((enable-recursive-minibuffers t)
+         (check
+          (lambda (it)
+            (and (symbolp it)
+                 (boundp it)
+                 (if pred (funcall pred (symbol-value it)) t))))
+         (v (or (and def (funcall check def) def)
+                (variable-at-point)))
+         vars
+         val)
     (mapatoms (lambda (atom) (when (funcall check atom) (push atom vars))))
     (setq val (completing-read
                (if (funcall check v)
@@ -88,9 +91,23 @@
                (if (symbolp v) (symbol-name v))))
     (list (if (equal val "") v (intern val)))))
 
+(defun emaps--keymap-symbol-p (x)
+  "Return non-NIL if X is a symbol for a keymap."
+  (and (symbolp x) (boundp x) (keymapp (symbol-value x))))
+
+(defun emaps--keymap-symbol-at-point ()
+  "The keymap symbol at point, if any."
+  (let ((vap (variable-at-point)))
+    (and (emaps--keymap-symbol-p vap) vap)))
+
 (defun emaps--read-keymap ()
   "Read the name of a keymap from the minibuffer and return it as a symbol."
-  (emaps--completing-read-variable "Enter keymap" 'keymapp))
+  (emaps--completing-read-variable
+   "Enter keymap" 'keymapp
+   ;; if there is a keymap at point, use this as the default as the
+   ;; user probably means to query this, otherwise default to the
+   ;; keymap variable for the current major mode.
+   (or (emaps--keymap-symbol-at-point) (emaps--keymap-symbol-for-mode major-mode))))
 
 ;;;###autoload
 (defun emaps-describe-keymap (keymap)
@@ -142,12 +159,16 @@ Unlike `describe-variable', this will display characters as strings rather than 
               (replace-match "" nil nil nil 2)))
           (set-buffer-modified-p nil))))))
 
+(defun emaps--keymap-symbol-for-mode (mode)
+  "Return the keymap symbol for MODE (or NIL if none exists)."
+  (let ((mode-map-symbol (intern (concat (symbol-name mode) "-map"))))
+    (when (emaps--keymap-symbol-p mode-map-symbol) mode-map-symbol)))
+
 ;;;###autoload
 (defun emaps-keymap-for-mode (mode)
   "Return the keymap for MODE (or NIL if none exists)."
-  (let ((mode-map-symbol (intern (concat (symbol-name mode) "-map"))))
-    (when (boundp mode-map-symbol)
-      (symbol-value mode-map-symbol))))
+  (let ((mode-map-symbol (emaps--keymap-symbol-for-mode mode)))
+    (and (emaps--keymap-symbol-p mode-map-symbol) (symbol-value mode-map-symbol))))
 
 ;;;###autoload
 (defun emaps-define-key (keymap key def &rest bindings)

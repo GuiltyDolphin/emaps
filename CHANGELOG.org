@@ -13,6 +13,12 @@
   - =.travis.yml=
 - new dependency: =dash (2.17.0)=
 
+** Changed
+
+- =emaps-describe-keymap= and =emaps-describe-keymap-bindings=
+  will now default the prompt to the current major mode map if
+  the symbol at point is not a keymap symbol
+
 * 0.1.0 - 2018-07-12
 
 ** Added
