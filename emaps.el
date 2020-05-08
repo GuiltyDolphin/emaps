@@ -65,6 +65,10 @@
        ,body
        (set-buffer-modified-p nil))))
 
+(defun emaps--bound-symbol-p (x)
+  "Return non-NIL if X is a symbol with a value."
+  (and (symbolp x) (boundp x)))
+
 (defun emaps--completing-read-variable (prompt &optional pred def)
   "Prompt the user with PROMPT for a variable that satisfied PRED (if supplied).
 
@@ -72,11 +76,9 @@ If DEF is supplied and satisfies PRED, use that as the default value, otherwise 
   (let* ((enable-recursive-minibuffers t)
          (check
           (lambda (it)
-            (and (symbolp it)
-                 (boundp it)
+            (and (emaps--bound-symbol-p it)
                  (if pred (funcall pred (symbol-value it)) t))))
-         (v (or (and def (funcall check def) def)
-                (variable-at-point)))
+         (v (or (and (funcall check def) def) (variable-at-point)))
          vars
          val)
     (mapatoms (lambda (atom) (when (funcall check atom) (push atom vars))))
@@ -93,7 +95,7 @@ If DEF is supplied and satisfies PRED, use that as the default value, otherwise 
 
 (defun emaps--keymap-symbol-p (x)
   "Return non-NIL if X is a symbol for a keymap."
-  (and (symbolp x) (boundp x) (keymapp (symbol-value x))))
+  (and (emaps--bound-symbol-p x) (keymapp (symbol-value x))))
 
 (defun emaps--keymap-symbol-at-point ()
   "The keymap symbol at point, if any."
@@ -134,8 +136,8 @@ Unlike `describe-variable', this will display characters as strings rather than 
 (defun emaps-describe-keymap-bindings (keymap)
   "Like `describe-bindings', but only describe bindings in KEYMAP."
   (interactive (emaps--read-keymap))
-  (let* ((keymap-name (if (symbolp keymap) (symbol-name keymap) "?"))
-         (keymap (if (symbolp keymap) (symbol-value keymap) keymap))
+  (let* ((keymap-name (if (emaps--keymap-symbol-p keymap) (symbol-name keymap) "?"))
+         (keymap (if (emaps--keymap-symbol-p keymap) (symbol-value keymap) keymap))
          (temp-map '(keymap))
          (prefix (emaps--get-available-binding-as-string "a")))
     (define-key temp-map (kbd prefix) keymap)
