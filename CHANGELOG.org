@@ -4,3 +4,21 @@
 #+OPTIONS: toc:2
 
 * Unreleased
+
+** Added
+
+- =CHANGELOG.org=
+- =.travis.yml=
+- new dependency: =dash (2.13.0)=
+
+* 0.1.0 - 2018-07-12
+
+** Added
+
+- new commands
+  - =emaps-define-key=
+  - =emaps-describe-keymap=
+  - =emaps-describe-keymap-bindings=
+  - =emaps-keymap-for-mode=
+- new custom group: =emaps=
+- new font face: =emaps-key-face=
