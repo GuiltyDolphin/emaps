@@ -4,4 +4,4 @@
 (package-file "emaps.el")
 
 (development
- (depends-on "dash" "2.13.0"))
+ (depends-on "dash" "2.17.0"))

@@ -13,14 +13,14 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-;; Copyright (C) 2016-2018 Ben Moon
+;; Copyright (C) 2016-2018, 2020 Ben Moon
 ;; Author: Ben Moon <software@guiltydolphin.com>
 ;; URL: https://github.com/GuiltyDolphin/emaps
 ;; Git-Repository: git://github.com/GuiltyDolphin/emaps.git
 ;; Created: 2016-06-20
 ;; Version: 0.1.0
 ;; Keywords: convenience, keyboard, keymap, utility
-;; Package-Requires: ((dash "2.13.0"))
+;; Package-Requires: ((dash "2.17.0"))
 
 ;;; Commentary:
 
