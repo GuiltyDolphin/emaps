@@ -20,7 +20,7 @@
 ;; Created: 2016-06-20
 ;; Version: 0.1.0
 ;; Keywords: convenience, keyboard, keymap, utility
-;; Package-Requires: ((dash "2.17.0"))
+;; Package-Requires: ((dash "2.17.0") (emacs "24"))
 
 ;;; Commentary:
 
